@@ -8,7 +8,7 @@ if "../.." not in sys.path:
     
 
 import unittest 
-from filebase.fileobject import FileBase, FileList
+from filebase.fileobject import FileBase, FileSet
 
 #%%---------------------------------------------------------------------------#
 class Test_FileBase(unittest.TestCase):
@@ -18,15 +18,9 @@ class Test_FileBase(unittest.TestCase):
         test if a FileBase object is an instance of FileList.
         '''
         
-        self.assertIsInstance(fb, FileList)
+        self.assertIsInstance(fb, FileSet)
     
-    def test_root_exist(self):
-        
-        '''
-        test if all root of FileBase object exist.
-        '''
-        
-        self.assertTrue(all(os.path.lexists(p) for p in fb.root))
+
         
         
     #%%-----------------------------------------------------------------------#
@@ -36,12 +30,23 @@ class Test_FileBase(unittest.TestCase):
    
 if __name__ == '__main__':
 
-    test_path = "../.."
+    test_path = ".."
     
     print('Test path is "{}".'.format(os.path.abspath(test_path)))
     
-    fb = FileBase(test_path)
     
-    print(fb.root)
+    fs = FileSet()
+    fb = FileBase(test_path)-FileBase('.')
+    
+    
+    fb.save(os.path.abspath('indices.txt'), relative=True)
+    
+    fs.load('indices.txt')
+    
+    
+    print(fs.filter('*.pyc', '*.txt'))
+#    print(fs)
     
     unittest.main(verbosity=2)
+    
+    

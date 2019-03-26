@@ -2,16 +2,16 @@
 
 import os
 import logging
-from filebase.fileobject import FileList
+from filebase.fileobject import FileSet
 
 #%%---------------------------------------------------------------------------#
-class FileBase(FileList):
+class FileBase(FileSet):
     
     indexfile = '~$indices.filebase'        
     filterlist = ['~$*'] 
     
     #%%-----------------------------------------------------------------------#    
-    def __init__(self, *root):
+    def __init__(self, *root, depth=None, directory=False):
         
         if not root:
             
@@ -22,28 +22,38 @@ class FileBase(FileList):
             self.root = tuple(set([os.path.abspath(p) for p in root]))
             
         
+        super().__init__(sum((FileSet(FileBase.list_files(rt, depth=depth, 
+             directory=directory)) for rt in self.root), FileSet([])))
+        
             
     #%%-----------------------------------------------------------------------#
     @staticmethod
-    def list_files(root, *, depth=None):
+    def list_files(root, *, depth=None, directory=False):
         
         '''
         list all files in the root folder.
         
-        depth: 
+        depth: depth of the folder structure, if None, will scan to deepest folder
         '''
         
         count = 0
         
         for rt, dirs, files in os.walk(root):
             
-            if depth and count > depth:
+            if depth is not None and count > depth:
                 break
             
-            for f in files:
-                print(os.path.normpath(os.path.join(rt, f)))
+            if directory:
+                
+                yield rt
+            else:
             
-            depth += 1
+                for f in files:
+                    
+                    yield os.path.normpath(os.path.join(rt, f))
             
-        
+            count += 1
+            
+    #%%-----------------------------------------------------------------------#
+      
 #%%---------------------------------------------------------------------------#
