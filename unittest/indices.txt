@@ -145,3 +145,5 @@
 ..\fileobject\filelist.py
 ..\fileobject\fileset.py
 ..\invalid\filebase.py
+indices.txt
+test_filebase.py

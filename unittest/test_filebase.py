@@ -36,15 +36,15 @@ if __name__ == '__main__':
     
     
     fs = FileSet()
-    fb = FileBase(test_path)-FileBase('.')
+    fb = FileBase(test_path)
     
     
-    fb.save(os.path.abspath('indices.txt'), relative=True)
+    fb.save(os.path.abspath('indices.txt'))
     
     fs.load('indices.txt')
     
     
-    print(fs.filter('*.pyc', '*.txt'))
+    print(fs.filter('*fileobject*', '*.py', union=False))
 #    print(fs)
     
     unittest.main(verbosity=2)

@@ -43,7 +43,7 @@ class FileSet(set):
         return self
 
     #%%-----------------------------------------------------------------------#    
-    def save(self, fname, relative=False):
+    def save(self, fname, relative=True):
 
         with open(fname, 'w') as fobj:
             
@@ -57,7 +57,23 @@ class FileSet(set):
         return self
     
     #%%-----------------------------------------------------------------------#    
-    def filter(self, *pattern):
+    def filter(self, *pattern, union=True): 
         
-        return sum((FileSet(fnmatch.filter(self, p)) for p in pattern), FileSet([]))    
+        if union:
+            
+            return sum((FileSet(fnmatch.filter(self, p)) for 
+                        p in pattern), FileSet([]))  
+        
+        else:
+            
+            s = self.filter(pattern[0])
+            
+            for p in pattern[1:]:
+                
+                s = FileSet(s.intersection(s.filter(p)))
+
+                
+            return FileSet(s)
+            
+        
 #%%---------------------------------------------------------------------------#
