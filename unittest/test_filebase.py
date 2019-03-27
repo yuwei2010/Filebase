@@ -30,23 +30,20 @@ class Test_FileBase(unittest.TestCase):
    
 if __name__ == '__main__':
 
-    test_path = ".."
+    test_path = r"Y:\\"
     
     print('Test path is "{}".'.format(os.path.abspath(test_path)))
     
     
+    
+#    fb = FileBase(test_path)
+#    fb.save(os.path.join(test_path, '~contents.index'), relative=False)
+
     fs = FileSet()
-    fb = FileBase(test_path)
+    fs.load(os.path.join(test_path, '~contents.index'))
     
+    print(fs['*The.Grand.Tour.S03E10.720p.WEB.H264-AMCON*'].basename())
     
-    fb.save(os.path.abspath('indices.txt'))
-    
-    fs.load('indices.txt')
-    
-    
-    print(fs.filter('*fileobject*', '*.py', union=False))
-#    print(fs)
-    
-    unittest.main(verbosity=2)
+    #unittest.main(verbosity=2)
     
     

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import io
 import logging
 import fnmatch
 
@@ -27,16 +28,29 @@ class FileSet(set):
         return FileSet(self.difference(other))
     
     #%%-----------------------------------------------------------------------#
+    def __getitem__(self, s):
+        
+        return self.filter(s)
+    #%%-----------------------------------------------------------------------#
+    def basename(self):
+        
+        return {os.path.basename(p) for p in self}
+    #%%-----------------------------------------------------------------------#
+    def commonpath(self):
+        
+        return os.path.commonpath(self)
+    #%%-----------------------------------------------------------------------#
+    def isabs(self):
+        
+        return dict((p, os.path.isabs(p)) for p in self)
+    
+    #%%-----------------------------------------------------------------------#
     def load(self, fname):
         
-        with open(fname, 'r') as fobj:
+        with io.open(fname, "r", encoding="utf-8") as fobj:
             
-            paths = [os.path.abspath(p) for p in fobj.read().split('\n') if os.path.lexists(p)]
-            
-            if not paths:
-                
-                self.logger.warn('No valid path is loaded.')
-            
+            paths = [os.path.abspath(p) for p in fobj.read().split('\n')]
+                        
             self.__init__(paths)
         
             
@@ -44,10 +58,12 @@ class FileSet(set):
 
     #%%-----------------------------------------------------------------------#    
     def save(self, fname, relative=True):
-
-        with open(fname, 'w') as fobj:
+        
+        
+        with io.open(fname, "w", encoding="utf-8") as fobj:
             
             if relative:
+                
                 fobj.writelines('\n'.join(sorted(os.path.relpath(p, 
                                     os.path.dirname(fname)) for p in self)))
                 
