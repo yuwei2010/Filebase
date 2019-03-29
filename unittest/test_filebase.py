@@ -26,27 +26,87 @@ class Test_FileBase(unittest.TestCase):
         
     #%%-----------------------------------------------------------------------#
 
+
+def sort_file1():
+    
+    fv1 = ffs.relpath(test_path).relpath(0, 1)
+    
+    _, keys = zip(*fv1.apply(lambda x: x.split('.')[0] if '.' in x else None))
+    
+    keys = set([k for k in keys if k is not None and len(k)>1])
+    
+    for k in keys:
+        
+        tempdir = os.path.join(test_path, '_temp')
+        dstdir = os.path.join(test_path, k)
+
+        if not os.path.lexists(tempdir):
+            
+            os.mkdir(tempdir)     
+            
+        found = ffs.relpath(test_path).relpath(0, 1)['*{}*'.format(k)]
+        
+        if len(found)<=1:
+            continue
+        ans = input('{} {}'.format(k, len(found)))
+        if ans == 'y':
+            
+            
+            print((found))
+
+            
+            try:
+                found.joindir(test_path).apply(shutil.move, tempdir)
+                os.rename(tempdir, dstdir)
+            except:
+                pass
+            
+            
+            
+
+        if ans == 'end':
+            
+            break
 #%%---------------------------------------------------------------------------#
 
    
 if __name__ == '__main__':
 
-    test_path = os.path.normpath(r"Y:/")
+    test_path = os.path.normpath(r"Z:\中文流行")
     
     print('Test path is "{}".'.format(os.path.abspath(test_path)))
     
     
     
+    
 #    fb = FileBase(test_path)
-#    fb.save(os.path.join(test_path, '~contents.index'), relative=True)
+#    fb.save(os.path.join(test_path, '~contents.all.filebase'), relative=True)
+#
+#    fs = FileSet().load(os.path.join(test_path, '~contents.all.filebase'))
+#    
+#    fs.dirs.save(os.path.join(test_path, '~contents.dirs.filebase'))
+#    fs.files.save(os.path.join(test_path, '~contents.files.filebase'))
+    
+    ffs = FileSet().load(os.path.join(test_path, '~contents.files.filebase'))
+    dfs = FileSet().load(os.path.join(test_path, '~contents.dirs.filebase'))
+    
+    tempdir = os.path.join(test_path, '_unsorted')
 
-    fs = FileSet().load(os.path.join(test_path, '~contents.index'))
+
+    if not os.path.lexists(tempdir):
+        
+        os.mkdir(tempdir) 
+
     
-    print(fs.exts)
+    lv1 = ffs.relpath(test_path).relpath(0, 1)
     
-    fs['*.mkv'].save(os.path.join(test_path, '~contents.mkv.filebase'))
+    print(dfs.get_emptydir().apply(os.rmdir))
     
-    ds = fs['*.mkv'].dirname()-FileSet([test_path])
+#    FileSet([p for p in lv1 if len(p)>3]).joindir(test_path).apply(shutil.move, tempdir)
     
-    print(ds.apply(shutil.move, os.path.join(test_path, '_TMP')))
+
+
+    
+    
+
     

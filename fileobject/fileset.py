@@ -36,10 +36,37 @@ class FileSet(set):
     def exts(self):
         
         return set(list(zip(*self.splitext()))[-1])
+    #%%-----------------------------------------------------------------------#    
+    @property
+    def files(self):
+
+        return FileSet(p for p in self if os.path.isfile(p))        
+    #%%-----------------------------------------------------------------------#    
+    @property
+    def dirs(self):
+        
+        return FileSet(p for p in self if os.path.isdir(p)) 
+    
+    #%%-----------------------------------------------------------------------#    
+    @property
+    def items(self):
+        
+        return FileSet(p for p in self if os.path.lexists(p))
+    #%%-----------------------------------------------------------------------#
+    def copy(self):
+        
+        return FileSet(super().copy())
     #%%-----------------------------------------------------------------------#
     def iterapply(self, func, *args, **kwargs):
         
-        return ((p, func(p, *args, **kwargs)) for p in self)
+        for p in self:
+            
+            try:
+                yield (p, func(p, *args, **kwargs))
+            except Exception as err:
+                self.logger.warn(str(err))
+        
+
     #%%-----------------------------------------------------------------------#
     def apply(self, func, *args, **kwargs):    
         
@@ -58,11 +85,20 @@ class FileSet(set):
     def dirname(self):
         
         return FileSet(os.path.dirname(p) for p in self)
-    
+
+    #%%-----------------------------------------------------------------------#
+    def diffmatch(self, pattern, gauge=0.5):
+        from difflib import SequenceMatcher
+        return FileSet(p for p in self if SequenceMatcher(None, pattern, p).ratio() >= gauge)
     #%%-----------------------------------------------------------------------#
     def exist(self):
         
         return [(p, os.path.exists(p)) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def get_emptydir(self):
+        
+        return FileSet(d for d in self if os.path.isdir(d) and not os.listdir(d))
+    
     #%%-----------------------------------------------------------------------#
     def getsize(self):
         
@@ -92,9 +128,18 @@ class FileSet(set):
         
         return FileSet(p for p in self)
     #%%-----------------------------------------------------------------------#
-    def relpath(self, start=os.curdir):
+    def relpath(self, start=os.curdir, end=None):
         
-        return FileSet(os.path.relpath(p, start) for p in self)
+        if isinstance(start, str):
+        
+            return FileSet(os.path.relpath(p, start) for p in self)
+        else:
+            
+            s = slice(start, end)
+            
+            return FileSet(os.sep.join(p.split(os.sep)[s]) for 
+                           p in self)
+            
     #%%-----------------------------------------------------------------------#
     def split(self):   
         
@@ -122,18 +167,24 @@ class FileSet(set):
         
  
     #%%-----------------------------------------------------------------------#
-    def load(self, fname, relative=True):
+    def load(self, fname, relative=True, check=False):
         
         with io.open(fname, "r", encoding="utf-8") as fobj:
             
             if relative:
             
                 paths = (os.path.normpath(os.path.join(os.path.dirname(fname), p)) for 
-                         p in fobj.read().split('\n'))
+                         p in fobj.read().split('\n') 
+                         if p.strip() and not p.strip().startswith('#'))
             else:
                 
-                paths =  (os.path.normpath(p) for p in fobj.read().split('\n'))
-                        
+                paths = (os.path.normpath(p) for p in fobj.read().split('\n') 
+                         if p.strip() and not p.strip().startswith('#'))
+                                 
+            if check:
+                
+                paths = (p for p in paths if os.path.lexists(p))
+            
             self.__init__(paths)
         
             

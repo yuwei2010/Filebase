@@ -11,7 +11,7 @@ class FileBase(FileSet):
     filterlist = ['~$*'] 
     
     #%%-----------------------------------------------------------------------#    
-    def __init__(self, *root, depth=None, directory=False):
+    def __init__(self, *root, depth=None, kind='all'):
         
         if not root:
             
@@ -23,12 +23,12 @@ class FileBase(FileSet):
             
         
         super().__init__(sum((FileSet(FileBase.list_files(rt, depth=depth, 
-             directory=directory)) for rt in self.root), FileSet([])))
+             kind=kind)) for rt in self.root), FileSet([])))
         
             
     #%%-----------------------------------------------------------------------#
     @staticmethod
-    def list_files(root, *, depth=None, directory=False):
+    def list_files(root, *, depth=None, kind='all'):
         
         '''
         list all files in the root folder.
@@ -43,14 +43,14 @@ class FileBase(FileSet):
             if depth is not None and count > depth:
                 break
             
-            if directory:
-                
+
+            if rt != root and kind == 'all' or kind == 'dir':               
                 yield rt
-            else:
             
+            if kind == 'all' or kind == 'file':
                 for f in files:
                     
-                    yield os.path.normpath(os.path.join(rt, f))
+                    yield os.path.join(rt, f)
             
             count += 1
             
