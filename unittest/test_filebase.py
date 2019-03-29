@@ -8,6 +8,7 @@ if "../.." not in sys.path:
     
 
 import unittest 
+import shutil
 from filebase.fileobject import FileBase, FileSet
 
 #%%---------------------------------------------------------------------------#
@@ -30,20 +31,22 @@ class Test_FileBase(unittest.TestCase):
    
 if __name__ == '__main__':
 
-    test_path = r"Y:\\"
+    test_path = os.path.normpath(r"Y:/")
     
     print('Test path is "{}".'.format(os.path.abspath(test_path)))
     
     
     
 #    fb = FileBase(test_path)
-#    fb.save(os.path.join(test_path, '~contents.index'), relative=False)
+#    fb.save(os.path.join(test_path, '~contents.index'), relative=True)
 
-    fs = FileSet()
-    fs.load(os.path.join(test_path, '~contents.index'))
+    fs = FileSet().load(os.path.join(test_path, '~contents.index'))
     
-    print(fs['*The.Grand.Tour.S03E10.720p.WEB.H264-AMCON*'].basename())
+    print(fs.exts)
     
-    #unittest.main(verbosity=2)
+    fs['*.mkv'].save(os.path.join(test_path, '~contents.mkv.filebase'))
     
+    ds = fs['*.mkv'].dirname()-FileSet([test_path])
+    
+    print(ds.apply(shutil.move, os.path.join(test_path, '_TMP')))
     

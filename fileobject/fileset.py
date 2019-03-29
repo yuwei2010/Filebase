@@ -32,24 +32,107 @@ class FileSet(set):
         
         return self.filter(s)
     #%%-----------------------------------------------------------------------#
+    @property
+    def exts(self):
+        
+        return set(list(zip(*self.splitext()))[-1])
+    #%%-----------------------------------------------------------------------#
+    def iterapply(self, func, *args, **kwargs):
+        
+        return ((p, func(p, *args, **kwargs)) for p in self)
+    #%%-----------------------------------------------------------------------#
+    def apply(self, func, *args, **kwargs):    
+        
+        return list(self.iterapply(func, *args, **kwargs))
+    #%%-----------------------------------------------------------------------#
     def basename(self):
         
         return {os.path.basename(p) for p in self}
+    
     #%%-----------------------------------------------------------------------#
     def commonpath(self):
         
         return os.path.commonpath(self)
+    
+    #%%-----------------------------------------------------------------------#
+    def dirname(self):
+        
+        return FileSet(os.path.dirname(p) for p in self)
+    
+    #%%-----------------------------------------------------------------------#
+    def exist(self):
+        
+        return [(p, os.path.exists(p)) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def getsize(self):
+        
+        return [(p, os.path.getsize(p)) for p in self]
     #%%-----------------------------------------------------------------------#
     def isabs(self):
         
-        return dict((p, os.path.isabs(p)) for p in self)
+        return [(p, os.path.isabs(p)) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def joinfile(self, fname):
+        
+        return FileSet(os.path.join(p, fname) for p in fname)
+    #%%-----------------------------------------------------------------------#
+    def joindir(self, dname):
+        
+        return FileSet(os.path.join(dname, p) for p in self.basename())
+    #%%-----------------------------------------------------------------------#
+    def lexist(self):
+        
+        return [(p, os.path.lexists(p)) for p in self]  
+    #%%-----------------------------------------------------------------------#
+    def normpath(self):
+        
+        return FileSet(os.path.normpath(p) for p in self)
+    #%%-----------------------------------------------------------------------#
+    def realpath(self):
+        
+        return FileSet(p for p in self)
+    #%%-----------------------------------------------------------------------#
+    def relpath(self, start=os.curdir):
+        
+        return FileSet(os.path.relpath(p, start) for p in self)
+    #%%-----------------------------------------------------------------------#
+    def split(self):   
+        
+        return [os.path.split(p) for p in self]
     
     #%%-----------------------------------------------------------------------#
-    def load(self, fname):
+    def splitext(self):
+        
+        return [(os.path.splitext(p)) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def popen(self, cmd):
+        
+        import subprocess
+        
+        def call(p):
+            
+            _cmd = cmd.format(p) 
+            
+            proc = subprocess.Popen(_cmd, stdout=subprocess.PIPE, shell=True, )
+            stdout, _ = proc.communicate()
+            
+            return stdout
+        
+        return [(p, call(p)) for p in self]
+        
+ 
+    #%%-----------------------------------------------------------------------#
+    def load(self, fname, relative=True):
         
         with io.open(fname, "r", encoding="utf-8") as fobj:
             
-            paths = [os.path.abspath(p) for p in fobj.read().split('\n')]
+            if relative:
+            
+                paths = (os.path.normpath(os.path.join(os.path.dirname(fname), p)) for 
+                         p in fobj.read().split('\n'))
+            else:
+                
+                paths =  (os.path.normpath(p) for p in fobj.read().split('\n'))
                         
             self.__init__(paths)
         
