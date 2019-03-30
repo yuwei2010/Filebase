@@ -29,7 +29,7 @@ class Test_FileBase(unittest.TestCase):
 
 def sort_file1():
     
-    fv1 = ffs.relpath(test_path).relpath(0, 1)
+    fv1 = ffs.relpath(root).relpath(0, 1)
     
     _, keys = zip(*fv1.apply(lambda x: x.split('.')[0] if '.' in x else None))
     
@@ -37,14 +37,14 @@ def sort_file1():
     
     for k in keys:
         
-        tempdir = os.path.join(test_path, '_temp')
-        dstdir = os.path.join(test_path, k)
+        tempdir = os.path.join(root, '_temp')
+        dstdir = os.path.join(root, k)
 
         if not os.path.lexists(tempdir):
             
             os.mkdir(tempdir)     
             
-        found = ffs.relpath(test_path).relpath(0, 1)['*{}*'.format(k)]
+        found = ffs.relpath(root).relpath(0, 1)['*{}*'.format(k)]
         
         if len(found)<=1:
             continue
@@ -56,7 +56,7 @@ def sort_file1():
 
             
             try:
-                found.joindir(test_path).apply(shutil.move, tempdir)
+                found.joindir(root).apply(shutil.move, tempdir)
                 os.rename(tempdir, dstdir)
             except:
                 pass
@@ -72,40 +72,89 @@ def sort_file1():
    
 if __name__ == '__main__':
 
-    test_path = os.path.normpath(r"Z:\中文流行")
+    root = os.path.normpath(r"Z:\_new_incoming\_unsorted")
     
-    print('Test path is "{}".'.format(os.path.abspath(test_path)))
-    
-    
+    print('Test path is "{}".'.format(os.path.abspath(root)))
     
     
-#    fb = FileBase(test_path)
-#    fb.save(os.path.join(test_path, '~contents.all.filebase'), relative=True)
-#
-#    fs = FileSet().load(os.path.join(test_path, '~contents.all.filebase'))
-#    
-#    fs.dirs.save(os.path.join(test_path, '~contents.dirs.filebase'))
-#    fs.files.save(os.path.join(test_path, '~contents.files.filebase'))
     
-    ffs = FileSet().load(os.path.join(test_path, '~contents.files.filebase'))
-    dfs = FileSet().load(os.path.join(test_path, '~contents.dirs.filebase'))
     
-    tempdir = os.path.join(test_path, '_unsorted')
+    fb = FileBase(root)
+    fb.save(os.path.join(root, '~contents.all.filebase'), relative=True)
 
+    fs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
+    
+    fs.dirs.save(os.path.join(root, '~contents.dirs.filebase'))
+    fs.files.save(os.path.join(root, '~contents.files.filebase'))
+    
+    ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
+    dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase'))
+    
 
-    if not os.path.lexists(tempdir):
+    
+    sortroot = os.path.normpath(r"Z:\\_new_incoming")
+    sortdirs = {
+            0: '人工',
+            1: '东方古典',
+            2: '中文流行',
+            3: '儿童',
+            4: '卡拉OK',
+            5: '原声',
+            6: '外文流行',
+            7: '西方古典',
+            8: '试音宝典',
+            9: '轻音乐',
+            }
+
+    
+    lv1 = ffs.relpath(root).relpath(0, 1).joindir(root)
+    
+    while 1:
+        k = lv1.pop()
         
-        os.mkdir(tempdir) 
-
+        if not os.path.lexists(k):
+            continue
+        
+        ans = input('{}: '.format(k))
+        
+        if ans == '':
+            
+            continue
+        
+        if ans == 'end' :
+            ffs.save(os.path.join(root, '~contents.files.filebase'))
+            break
+        
+        else: 
+            
+            select = ans
     
-    lv1 = ffs.relpath(test_path).relpath(0, 1)
-    
-    print(dfs.get_emptydir().apply(os.rmdir))
-    
-#    FileSet([p for p in lv1 if len(p)>3]).joindir(test_path).apply(shutil.move, tempdir)
-    
-
-
+        
+        targetdir = os.path.join(sortroot, sortdirs[int(select)])
+        if not os.path.lexists(targetdir):
+            os.mkdir(targetdir)
+        
+        ans = input('{}?  '.format(targetdir))
+        
+        if ans == 'end':
+            ffs.save(os.path.join(root, '~contents.files.filebase'))
+            break
+        
+        elif ans == 'y':
+            
+            try:
+        
+                shutil.move(k, targetdir)
+                
+            except Exception as err:
+                
+                ffs.logger.warn(str(err))
+                
+            else:
+                
+                pass
+#                ffs.save(os.path.join(root, '~contents.files.filebase'))
+                
     
     
 

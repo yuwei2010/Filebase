@@ -74,7 +74,7 @@ class FileSet(set):
     #%%-----------------------------------------------------------------------#
     def basename(self):
         
-        return {os.path.basename(p) for p in self}
+        return FileSet(os.path.basename(p) for p in self)
     
     #%%-----------------------------------------------------------------------#
     def commonpath(self):
@@ -116,6 +116,14 @@ class FileSet(set):
         
         return FileSet(os.path.join(dname, p) for p in self.basename())
     #%%-----------------------------------------------------------------------#
+    def joinext(self, ext=None):
+        
+        if ext is None:
+            
+            return FileSet(p for p, _ in self.splitext())
+        else:
+            return FileSet(p+ext for p, _ in self.splitext())
+    #%%-----------------------------------------------------------------------#
     def lexist(self):
         
         return [(p, os.path.lexists(p)) for p in self]  
@@ -149,6 +157,7 @@ class FileSet(set):
     def splitext(self):
         
         return [(os.path.splitext(p)) for p in self]
+    
     #%%-----------------------------------------------------------------------#
     def popen(self, cmd):
         
@@ -198,8 +207,9 @@ class FileSet(set):
             
             if relative:
                 
+                start = os.path.dirname(fname)
                 fobj.writelines('\n'.join(sorted(os.path.relpath(p, 
-                                    os.path.dirname(fname)) for p in self)))
+                                    start) for p in self)))
                 
             else:
                 fobj.writelines('\n'.join(sorted(self)))
