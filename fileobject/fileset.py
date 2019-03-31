@@ -95,7 +95,7 @@ class FileSet(set):
         
         return [(p, os.path.exists(p)) for p in self]
     #%%-----------------------------------------------------------------------#
-    def get_emptydir(self):
+    def find_empty(self):
         
         return FileSet(d for d in self if os.path.isdir(d) and not os.listdir(d))
     

@@ -67,18 +67,9 @@ def sort_file1():
         if ans == 'end':
             
             break
-#%%---------------------------------------------------------------------------#
+        
+def sort_file2():
 
-   
-if __name__ == '__main__':
-
-    root = os.path.normpath(r"Z:\_new_incoming\_unsorted")
-    
-    print('Test path is "{}".'.format(os.path.abspath(root)))
-    
-    
-    
-    
     fb = FileBase(root)
     fb.save(os.path.join(root, '~contents.all.filebase'), relative=True)
 
@@ -153,6 +144,56 @@ if __name__ == '__main__':
             else:
                 
                 pass
+#%%---------------------------------------------------------------------------#
+
+   
+if __name__ == '__main__':
+
+    root = os.path.normpath(r"Z:\中文流行\_unsorted")
+    
+    print('Test path is "{}".'.format(os.path.abspath(root)))
+    
+#    fb = FileBase(root)
+#    fb.save(os.path.join(root, '~contents.all.filebase'), relative=True)
+#
+#    fs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
+#    
+#    fs.dirs.save(os.path.join(root, '~contents.dirs.filebase'))
+#    fs.files.save(os.path.join(root, '~contents.files.filebase'))
+    
+    ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
+    dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase'))    
+    
+#    print(sorted(ffs.exts))
+    
+    fape = ffs['*.flac']+ffs['*.FLAC']
+    
+#    print(fape)
+    
+#    sel = []
+#    
+#    for name, size in fape.getsize():
+#        
+#        if size < 7e7:
+#            
+#            sel.append(name)
+#            
+#            
+#            
+#    FileSet(sel).save(os.path.join(root, '~contents.songs.filebase'))
+            
+            
+    songs = FileSet().load(os.path.join(root, '~contents.songs.filebase'))
+    
+#    test = FileSet([songs.pop()])
+    
+    print(len(songs))
+    
+#    dst = os.path.normpath(r"Z:\_上传\转换\收集190330")
+#    
+    print(songs.apply(shutil.copy, "Z:\\_上传\\转换\\收集190330\\"))
+    
+    
 #                ffs.save(os.path.join(root, '~contents.files.filebase'))
                 
     
