@@ -149,54 +149,55 @@ def sort_file2():
    
 if __name__ == '__main__':
 
-    root = os.path.normpath(r"Z:\中文流行\_unsorted")
+    root = os.path.normpath(r"Z:\轻音乐\_unsorted")
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
-#    fb = FileBase(root)
-#    fb.save(os.path.join(root, '~contents.all.filebase'), relative=True)
-#
+    fb = FileBase(root)
+    fb.save(os.path.join(root, '~contents.all.filebase'))
+
 #    fs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
-#    
-#    fs.dirs.save(os.path.join(root, '~contents.dirs.filebase'))
-#    fs.files.save(os.path.join(root, '~contents.files.filebase'))
     
+    dfs = fb.dirs
+    
+    
+    dfs.save(os.path.join(root, '~contents.dirs.filebase'))
+    (fb-dfs).save(os.path.join(root, '~contents.files.filebase'))
+    
+    
+    afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
     ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
-    dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase'))    
+    dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
     
-#    print(sorted(ffs.exts))
     
-    fape = ffs['*.flac']+ffs['*.FLAC']
-    
-#    print(fape)
-    
-#    sel = []
-#    
-#    for name, size in fape.getsize():
+#    for f in ffs['*(1)*']:
 #        
-#        if size < 7e7:
+#        twin = f.replace('(1)', '')
+#        
+#        if os.path.lexists(twin) and os.path.getsize(f) == os.path.getsize(twin):
 #            
-#            sel.append(name)
-#            
-#            
-#            
-#    FileSet(sel).save(os.path.join(root, '~contents.songs.filebase'))
+#            os.remove(f)
             
             
-    songs = FileSet().load(os.path.join(root, '~contents.songs.filebase'))
+        
+
+#    print(dfs.find_empty().apply(os.rmdir))
     
-#    test = FileSet([songs.pop()])
+#    for d, d1 in afs.squeeze_dir(dfs, ffs):
+#
+#        if os.path.basename(d) == os.path.basename(d1):
+#            
+#            d1fs = afs[d1+os.sep+'*']
+#            d1fs.apply(shutil.move, d)
+        
+
     
-    print(len(songs))
-    
-#    dst = os.path.normpath(r"Z:\_上传\转换\收集190330")
+#    d = 'Z:\\轻音乐\\unzip\\New Age Style - Vocal New Age Hits 1 (2013)'
+#
+#    d1, = dfs[d+os.sep+'*']
 #    
-    print(songs.apply(shutil.copy, "Z:\\_上传\\转换\\收集190330\\"))
-    
-    
-#                ffs.save(os.path.join(root, '~contents.files.filebase'))
-                
-    
-    
+#    print(len(ffs[d+os.sep+'*']), len(ffs[d1+os.sep+'*']))
+        
+
 
     

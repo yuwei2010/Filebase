@@ -147,7 +147,27 @@ class FileSet(set):
             
             return FileSet(os.sep.join(p.split(os.sep)[s]) for 
                            p in self)
+    #%%-----------------------------------------------------------------------#
+    def squeeze_dir(self, dirs=None, files=None):
+        
+        files = self.files if files is None else files
+        dirs = self.dirs if dirs is None else dirs
+        
+        for d in dirs:
             
+            try:
+                d1, = dirs[d+os.sep+'*']
+            except(ValueError):
+                continue
+            
+            if len(files[d+os.sep+'*']) == len(files[d1+os.sep+'*']):
+                
+                yield d, d1
+            
+            
+            
+            
+                    
     #%%-----------------------------------------------------------------------#
     def split(self):   
         
