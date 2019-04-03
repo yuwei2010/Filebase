@@ -32,23 +32,29 @@ class FileSet(set):
         
         return self.filter(s)
     #%%-----------------------------------------------------------------------#
-    @property
+
     def exts(self):
         
-        return set(list(zip(*self.splitext()))[-1])
+        return set(list(zip(*self.splitext()))[-1]) - set([''])
     #%%-----------------------------------------------------------------------#    
-    @property
+
     def files(self):
+        if hasattr(self, '_files'):
+            
+            return self._files
 
         return FileSet(p for p in self if os.path.isfile(p))        
     #%%-----------------------------------------------------------------------#    
-    @property
+
     def dirs(self):
-        
+
+        if hasattr(self, '_dirs'):
+            
+            return self._dirs        
         return FileSet(p for p in self if os.path.isdir(p)) 
     
     #%%-----------------------------------------------------------------------#    
-    @property
+
     def items(self):
         
         return FileSet(p for p in self if os.path.lexists(p))
@@ -56,6 +62,18 @@ class FileSet(set):
     def copy(self):
         
         return FileSet(super().copy())
+    
+    #%%-----------------------------------------------------------------------#
+    def count(self, *strs):
+        
+        if not strs:
+            
+            return len(self)
+        
+        return [(s, len(self['*{}*'.format(s)])) for s in strs]
+    
+    #%%-----------------------------------------------------------------------#
+    
     #%%-----------------------------------------------------------------------#
     def iterapply(self, func, *args, **kwargs):
         
@@ -90,6 +108,11 @@ class FileSet(set):
     def diffmatch(self, pattern, gauge=0.5):
         from difflib import SequenceMatcher
         return FileSet(p for p in self if SequenceMatcher(None, pattern, p).ratio() >= gauge)
+    
+    #%%-----------------------------------------------------------------------#
+    def endswith(self, s):
+        
+        return FileSet(p for p in self if p.endswith(s))
     #%%-----------------------------------------------------------------------#
     def exist(self):
         
@@ -110,11 +133,11 @@ class FileSet(set):
     #%%-----------------------------------------------------------------------#
     def joinfile(self, fname):
         
-        return FileSet(os.path.join(p, fname) for p in fname)
+        return FileSet(os.path.join(p, os.path.normpath(fname)) for p in fname)
     #%%-----------------------------------------------------------------------#
     def joindir(self, dname):
         
-        return FileSet(os.path.join(dname, p) for p in self.basename())
+        return FileSet(os.path.join(os.path.normpath(dname), p) for p in self)
     #%%-----------------------------------------------------------------------#
     def joinext(self, ext=None):
         
@@ -146,7 +169,7 @@ class FileSet(set):
             s = slice(start, end)
             
             return FileSet(os.sep.join(p.split(os.sep)[s]) for 
-                           p in self)
+                           p in self).remove('')
     #%%-----------------------------------------------------------------------#
     def squeeze_dir(self, dirs=None, files=None):
         
@@ -164,10 +187,6 @@ class FileSet(set):
                 
                 yield d, d1
             
-            
-            
-            
-                    
     #%%-----------------------------------------------------------------------#
     def split(self):   
         
@@ -177,6 +196,22 @@ class FileSet(set):
     def splitext(self):
         
         return [(os.path.splitext(p)) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def startswith(self, s):
+        
+        return FileSet(p for p in self if p.startswith(s))
+
+    #%%-----------------------------------------------------------------------#
+    def pop(self, *s):
+        if not s:
+            
+            return super().pop()
+        else:
+            other = FileSet(s)
+            
+            self.__init__(self-other)
+            
+            return other
     
     #%%-----------------------------------------------------------------------#
     def popen(self, cmd):
@@ -194,7 +229,13 @@ class FileSet(set):
         
         return [(p, call(p)) for p in self]
         
- 
+    #%%-----------------------------------------------------------------------#
+    def remove(self, *s):
+        other = FileSet(s)
+        
+        self.__init__(self-other)
+        
+        return self
     #%%-----------------------------------------------------------------------#
     def load(self, fname, relative=True, check=False):
         
@@ -255,5 +296,12 @@ class FileSet(set):
                 
             return FileSet(s)
             
+    #%%-----------------------------------------------------------------------#   
+    def match(self, pattern):
+
+        import re
+
+        patt = re.compile(pattern)   
         
+        return FileSet(p for p in self if patt.match(p) is not None) 
 #%%---------------------------------------------------------------------------#

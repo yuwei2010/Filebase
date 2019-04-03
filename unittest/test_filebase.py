@@ -144,6 +144,38 @@ def sort_file2():
             else:
                 
                 pass
+
+def sort_file3():
+    
+    for f in ffs['*(1)*']:
+        
+        twin = f.replace('(1)', '')
+        
+        
+        if os.path.lexists(f) and os.path.lexists(twin) and os.path.getsize(f) == os.path.getsize(twin):
+            
+            print(f)
+            
+
+            os.remove(f)
+
+            
+            
+        
+
+    print(dfs.find_empty().apply(os.rmdir))
+    
+    for d, d1 in afs.squeeze_dir(dfs, ffs):
+
+        if os.path.basename(d) == os.path.basename(d1):
+            
+            print(d)
+            
+            try:
+                d1fs = afs[d1+os.sep+'*']
+                d1fs.apply(shutil.move, d)
+            except:
+                continue
 #%%---------------------------------------------------------------------------#
 
    
@@ -153,43 +185,82 @@ if __name__ == '__main__':
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
-    fb = FileBase(root)
-    fb.save(os.path.join(root, '~contents.all.filebase'))
-
-#    fs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
-    
-    dfs = fb.dirs
-    
-    
-    dfs.save(os.path.join(root, '~contents.dirs.filebase'))
-    (fb-dfs).save(os.path.join(root, '~contents.files.filebase'))
+#    fb = FileBase(root)
+#
+#
+#    
+#    fb.save(os.path.join(root, '~contents.all.filebase'))
+#    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
+#    fb.files().save(os.path.join(root, '~contents.files.filebase'))
     
     
     afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
     ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
     dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
     
+
     
-#    for f in ffs['*(1)*']:
-#        
-#        twin = f.replace('(1)', '')
-#        
-#        if os.path.lexists(twin) and os.path.getsize(f) == os.path.getsize(twin):
-#            
-#            os.remove(f)
+    lv1 = ffs.relpath(root).relpath(0,1)#.joindir(root)
+    
+    print(lv1.count())
+    
+    for name in lv1:
+        
+        
+        seg1, *segs = name.split()
+        
+        if '.' in seg1:
+            
+            seg1, *segs = seg1.split('.')
+            
+        
+        
+        key = '{}*'.format(seg1)
+        
+        found = lv1[key]
+        
+        
+        if found.count() == 1 & len(seg1)>1:
+            
+
+            found.joindir(root).apply(shutil.move, r'Z:\轻音乐\单碟')
+            
+        
+        elif segs:
+            
+            seg2, *_ = segs
+            if len(seg2) > 1:
+            
+                found = lv1['{}?{}*'.format(seg1, seg2)]
+                
+                if found.joindir(root).dirs().count() > 1:
+                
+                    path = os.path.join(r'Z:\轻音乐', '{}.{}'.format(seg1, seg2))
+                    
+                    print(path)
+                    if not os.path.lexists(path):
+                        
+                        os.mkdir(path)            
+        
+                    found.joindir(root).apply(shutil.move, path)
+          
             
             
         
 
-#    print(dfs.find_empty().apply(os.rmdir))
+
     
-#    for d, d1 in afs.squeeze_dir(dfs, ffs):
-#
-#        if os.path.basename(d) == os.path.basename(d1):
-#            
-#            d1fs = afs[d1+os.sep+'*']
-#            d1fs.apply(shutil.move, d)
-        
+#    path = os.path.join(r'Z:\轻音乐', 'Various.Artist')
+#    
+#    if not os.path.lexists(path):
+#        
+#        os.mkdir(path)
+#        
+#        
+#    key = 'Various Artists'
+#    lv1['*{}*'.format(key)].apply(shutil.move, path)
+    
+    
 
     
 #    d = 'Z:\\轻音乐\\unzip\\New Age Style - Vocal New Age Hits 1 (2013)'

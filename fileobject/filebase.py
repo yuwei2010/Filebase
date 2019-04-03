@@ -22,13 +22,18 @@ class FileBase(FileSet):
             self.root = tuple(set([os.path.abspath(p) for p in root]))
             
         
-        super().__init__(sum((FileSet(FileBase.list_files(rt, depth=depth, 
-             kind=kind)) for rt in self.root), FileSet([])))
+        items = sum((FileSet(FileBase.list_files(rt, depth=depth
+                                )) for rt in self.root), FileSet([]))
         
-            
+        self._files = FileSet(p for p in items if not p.endswith(os.sep))
+        
+        super().__init__(os.path.normpath(p) for p in items)
+        
+        self._dirs = self-self._files
+                    
     #%%-----------------------------------------------------------------------#
     @staticmethod
-    def list_files(root, *, depth=None, kind='all'):
+    def list_files(root, *, depth=None):
         
         '''
         list all files in the root folder.
@@ -44,13 +49,13 @@ class FileBase(FileSet):
                 break
             
 
-            if rt != root and kind == 'all' or kind == 'dir':               
-                yield rt
+            if rt != root:               
+                yield rt + os.sep
             
-            if kind == 'all' or kind == 'file':
-                for f in files:
-                    
-                    yield os.path.join(rt, f)
+
+            for f in files:
+                
+                yield os.path.join(rt, f)
             
             count += 1
             
