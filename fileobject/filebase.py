@@ -29,7 +29,14 @@ class FileBase(FileSet):
         
         super().__init__(os.path.normpath(p) for p in items)
         
-        self._dirs = self-self._files
+        self._dirs = self - self._files
+        
+        if kind == 'file':
+            
+            super().__init__(self._files)
+        
+        elif kind == 'dir':
+            super().__init__(self._dirs)
                     
     #%%-----------------------------------------------------------------------#
     @staticmethod
@@ -41,15 +48,20 @@ class FileBase(FileSet):
         depth: depth of the folder structure, if None, will scan to deepest folder
         '''
         
-        count = 0
+
         
         for rt, dirs, files in os.walk(root):
             
-            if depth is not None and count > depth:
-                break
+            d = len(os.path.relpath(rt, root).split(os.sep))
             
-
-            if rt != root:               
+            if d > depth:
+                
+                del dirs[:]
+                
+                continue
+       
+            if rt != root: 
+                
                 yield rt + os.sep
             
 
@@ -57,7 +69,7 @@ class FileBase(FileSet):
                 
                 yield os.path.join(rt, f)
             
-            count += 1
+
             
     #%%-----------------------------------------------------------------------#
       

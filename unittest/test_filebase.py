@@ -176,29 +176,8 @@ def sort_file3():
                 d1fs.apply(shutil.move, d)
             except:
                 continue
-#%%---------------------------------------------------------------------------#
-
-   
-if __name__ == '__main__':
-
-    root = os.path.normpath(r"Z:\轻音乐\_unsorted")
-    
-    print('Test path is "{}".'.format(os.path.abspath(root)))
-    
-#    fb = FileBase(root)
-#
-#
-#    
-#    fb.save(os.path.join(root, '~contents.all.filebase'))
-#    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
-#    fb.files().save(os.path.join(root, '~contents.files.filebase'))
-    
-    
-    afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
-    ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
-    dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
-    
-
+            
+def sort_file4():
     
     lv1 = ffs.relpath(root).relpath(0,1)#.joindir(root)
     
@@ -243,6 +222,44 @@ if __name__ == '__main__':
                         os.mkdir(path)            
         
                     found.joindir(root).apply(shutil.move, path)
+#%%---------------------------------------------------------------------------#
+
+   
+if __name__ == '__main__':
+
+    root = os.path.normpath(r"Z:\西方古典\_unsorted")
+    
+    print('Test path is "{}".'.format(os.path.abspath(root)))
+    
+#    fb = FileBase(root)
+#
+#
+#    
+#    fb.save(os.path.join(root, '~contents.all.filebase'))
+#    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
+#    fb.files().save(os.path.join(root, '~contents.files.filebase'))
+    
+
+    afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
+    ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
+    dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
+    
+    
+    name = 'Various.Artists'
+    
+    key = 'V.A.'
+    
+    lv1 = ffs.relpath2(root, 1)
+    
+    path = os.path.join(r"Z:\西方古典", name)
+    
+    if not os.path.lexists(path):
+        
+        os.mkdir(path)
+        
+    
+    lv1['*{}*'.format(key)].apply(shutil.move, path)
+    
           
             
             

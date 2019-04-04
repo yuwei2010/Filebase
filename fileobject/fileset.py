@@ -171,6 +171,7 @@ class FileSet(set):
             return FileSet(os.sep.join(p.split(os.sep)[s]) for 
                            p in self).remove('')
     #%%-----------------------------------------------------------------------#
+    @classmethod
     def squeeze_dir(self, dirs=None, files=None):
         
         files = self.files if files is None else files
@@ -180,7 +181,7 @@ class FileSet(set):
             
             try:
                 d1, = dirs[d+os.sep+'*']
-            except(ValueError):
+            except:
                 continue
             
             if len(files[d+os.sep+'*']) == len(files[d1+os.sep+'*']):
@@ -236,6 +237,10 @@ class FileSet(set):
         self.__init__(self-other)
         
         return self
+    #%%-----------------------------------------------------------------------#
+    def relpath2(self, root, level=1):
+        
+        return self.relpath(root).relpath(0, level).joindir(root)
     #%%-----------------------------------------------------------------------#
     def load(self, fname, relative=True, check=False):
         
