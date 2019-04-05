@@ -52,13 +52,14 @@ class FileBase(FileSet):
         
         for rt, dirs, files in os.walk(root):
             
-            d = len(os.path.relpath(rt, root).split(os.sep))
-            
-            if d > depth:
+            if depth is not None:
+                d = len(os.path.relpath(rt, root).split(os.sep))
                 
-                del dirs[:]
-                
-                continue
+                if d > depth:
+                    
+                    del dirs[:]
+                    
+                    continue
        
             if rt != root: 
                 

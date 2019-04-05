@@ -227,7 +227,7 @@ def sort_file4():
    
 if __name__ == '__main__':
 
-    root = os.path.normpath(r"Z:\西方古典\_unsorted")
+    root = os.path.normpath(r"X:\_TV_Serie\_unsorted")
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
@@ -244,14 +244,16 @@ if __name__ == '__main__':
     ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
     dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
     
+
+    name = '阿德龙大酒店'
     
-    name = 'Various.Artists'
-    
-    key = 'V.A.'
+    key = '阿德龙大酒店'
     
     lv1 = ffs.relpath2(root, 1)
     
-    path = os.path.join(r"Z:\西方古典", name)
+#    print(lv1.fcount('. _'))
+#    
+    path = os.path.join(r"X:\_TV_Serie", name)
     
     if not os.path.lexists(path):
         

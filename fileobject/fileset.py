@@ -64,6 +64,22 @@ class FileSet(set):
         return FileSet(super().copy())
     
     #%%-----------------------------------------------------------------------#
+    def fcount(self, sep=' ', fmt=lambda x:x):
+        
+        from collections import Counter
+        lst = []
+        
+
+        for p in self:
+            for s in os.sep+sep:
+            
+                p = p.replace(s, ' ')
+                
+            lst.extend(fmt(p).split())
+            
+        return Counter(lst)
+    
+    #%%-----------------------------------------------------------------------#
     def count(self, *strs):
         
         if not strs:
@@ -71,9 +87,7 @@ class FileSet(set):
             return len(self)
         
         return [(s, len(self['*{}*'.format(s)])) for s in strs]
-    
-    #%%-----------------------------------------------------------------------#
-    
+        
     #%%-----------------------------------------------------------------------#
     def iterapply(self, func, *args, **kwargs):
         
@@ -106,8 +120,16 @@ class FileSet(set):
 
     #%%-----------------------------------------------------------------------#
     def diffmatch(self, pattern, gauge=0.5):
+        
         from difflib import SequenceMatcher
         return FileSet(p for p in self if SequenceMatcher(None, pattern, p).ratio() >= gauge)
+    #%%-----------------------------------------------------------------------#
+    def distance(self, pattern):
+        
+        import nltk
+        
+
+        return list(zip(*sorted((nltk.edit_distance(pattern, p), p) for p in self)))[1]
     
     #%%-----------------------------------------------------------------------#
     def endswith(self, s):
@@ -238,7 +260,7 @@ class FileSet(set):
         
         return self
     #%%-----------------------------------------------------------------------#
-    def relpath2(self, root, level=1):
+    def relpath2(self, root, level=None):
         
         return self.relpath(root).relpath(0, level).joindir(root)
     #%%-----------------------------------------------------------------------#
@@ -264,7 +286,11 @@ class FileSet(set):
         
             
         return self
-
+    #%%-----------------------------------------------------------------------#    
+    def take(self, start=None, end=None, step=None):
+        
+        s = slice(start, end, step)
+        return FileSet(sorted(self)[s])
     #%%-----------------------------------------------------------------------#    
     def save(self, fname, relative=True):
         
