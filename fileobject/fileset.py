@@ -74,7 +74,7 @@ class FileSet(set):
             for s in os.sep+sep:
             
                 p = p.replace(s, ' ')
-                
+            
             lst.extend(fmt(p).split())
             
         return Counter(lst)

@@ -227,33 +227,35 @@ def sort_file4():
    
 if __name__ == '__main__':
 
-    root = os.path.normpath(r"X:\_TV_Serie\_unsorted")
+    root = os.path.normpath(r"X:\MOVIES_HD")
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
-#    fb = FileBase(root)
-#
-#
-#    
-#    fb.save(os.path.join(root, '~contents.all.filebase'))
-#    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
-#    fb.files().save(os.path.join(root, '~contents.files.filebase'))
+    fb = FileBase(root)
+
+
+    
+    fb.save(os.path.join(root, '~contents.all.filebase'))
+    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
+    fb.files().save(os.path.join(root, '~contents.files.filebase'))
     
 
     afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
     ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
     dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
     
-
-    name = '阿德龙大酒店'
     
-    key = '阿德龙大酒店'
+    print(ffs['*3D*'])
+
+    name = '3D'
+    
+    key = '3d'
     
     lv1 = ffs.relpath2(root, 1)
     
 #    print(lv1.fcount('. _'))
 #    
-    path = os.path.join(r"X:\_TV_Serie", name)
+    path = os.path.join(r"X:\_new_incoming", name)
     
     if not os.path.lexists(path):
         
