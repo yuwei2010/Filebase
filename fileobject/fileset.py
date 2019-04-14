@@ -4,6 +4,8 @@ import io
 import logging
 import fnmatch
 
+from datetime import date
+
 #%%---------------------------------------------------------------------------#
 class FileSet(set):
 
@@ -143,11 +145,33 @@ class FileSet(set):
     def find_empty(self):
         
         return FileSet(d for d in self if os.path.isdir(d) and not os.listdir(d))
-    
+    #%%-----------------------------------------------------------------------#
+    def getatime(self):
+        
+        return [(p, date.fromtimestamp(os.path.getatime(p))) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def getmtime(self):
+        
+        return [(p, date.fromtimestamp(os.path.getmtime(p))) for p in self]
+    #%%-----------------------------------------------------------------------#
+    def getctime(self):
+        
+        return [(p, date.fromtimestamp(os.path.getctime(p))) for p in self]
     #%%-----------------------------------------------------------------------#
     def getsize(self):
         
         return [(p, os.path.getsize(p)) for p in self]
+    
+    #%%-----------------------------------------------------------------------#
+    def groupby(self, func):
+        
+        retdict = dict()
+        
+        for p in self:
+            
+            retdict.setdefault(func(p), FileSet()).add(p)
+            
+        return retdict
     #%%-----------------------------------------------------------------------#
     def isabs(self):
         

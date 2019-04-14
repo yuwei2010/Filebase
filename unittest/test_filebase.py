@@ -9,6 +9,8 @@ if "../.." not in sys.path:
 
 import unittest 
 import shutil
+from datetime import date
+
 from filebase.fileobject import FileBase, FileSet
 
 #%%---------------------------------------------------------------------------#
@@ -226,67 +228,59 @@ def sort_file4():
 
    
 if __name__ == '__main__':
+    
+    import re
 
-    root = os.path.normpath(r"Z:\试音宝典\_unsorted")
+    root = os.path.normpath(r"W:\_new_photos")
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
-#    fb = FileBase(root)    
-#    fb.save(os.path.join(root, '~contents.all.filebase'))
-#    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
-#    fb.files().save(os.path.join(root, '~contents.files.filebase'))
+    fb = FileBase(root)    
+    fb.save(os.path.join(root, '~contents.all.filebase'))
+    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
+    fb.files().save(os.path.join(root, '~contents.files.filebase'))
 #    
 
     afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
     ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
     dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
     
-#    print(ffs['*.rar'])
+
+    pat = re.compile(r'[A-Z]{3}_([0-9]{8})_\S+\.[A-Za-z4]{3}')
+    fimg = ffs['*']
     
-#    print(ffs['*3D*'])
-#
-    name = '试音'
-#    
-    key = '试音'
-#    
-    lv1 = ffs.relpath(root).relpath(0, 1)
-#    
-##    print(lv1.fcount('. _'))
-##    
-    path = os.path.join(r"Z:\试音宝典", name)
-#    
-    if not os.path.lexists(path):
+    dstdir = r'W:\_sorted'
+    
+    for f in fimg:
         
-        os.mkdir(path)
-        
-    
-    lv1['*{}*'.format(key)].joindir(root).apply(shutil.move, path)
-    
-          
+        if not os.path.lexists(f):
             
-            
+            continue 
+        _, name = os.path.split(f)
         
+        
+        
+        match = pat.match(name)
+        
+        
+        print(name)
+        if match:
+            
+            dat, = match.groups()
+            
+            dpath = os.path.join(dstdir, dat[:-2])
+            
+            if not os.path.lexists(dpath):
+                
+                os.mkdir(dpath)
+                
+            if not os.path.lexists(os.path.join(dpath, name)):
+                
+                shutil.move(f, dpath)
 
-
-    
-#    path = os.path.join(r'Z:\轻音乐', 'Various.Artist')
-#    
-#    if not os.path.lexists(path):
-#        
-#        os.mkdir(path)
-#        
-#        
-#    key = 'Various Artists'
-#    lv1['*{}*'.format(key)].apply(shutil.move, path)
-    
+        
     
 
-    
-#    d = 'Z:\\轻音乐\\unzip\\New Age Style - Vocal New Age Hits 1 (2013)'
-#
-#    d1, = dfs[d+os.sep+'*']
-#    
-#    print(len(ffs[d+os.sep+'*']), len(ffs[d1+os.sep+'*']))
         
 
 
