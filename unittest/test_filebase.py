@@ -235,10 +235,10 @@ if __name__ == '__main__':
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
-    fb = FileBase(root)    
-    fb.save(os.path.join(root, '~contents.all.filebase'))
-    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
-    fb.files().save(os.path.join(root, '~contents.files.filebase'))
+#    fb = FileBase(root)    
+#    fb.save(os.path.join(root, '~contents.all.filebase'))
+#    fb.dirs().save(os.path.join(root, '~contents.dirs.filebase'))
+#    fb.files().save(os.path.join(root, '~contents.files.filebase'))
 #    
 
     afs = FileSet().load(os.path.join(root, '~contents.all.filebase'))
@@ -247,36 +247,38 @@ if __name__ == '__main__':
     
 
     pat = re.compile(r'[A-Z]{3}_([0-9]{8})_\S+\.[A-Za-z4]{3}')
-    fimg = ffs['*']
+    fimg = ffs['*'].basename().match(r'DSC[0-9]+.JPG')
     
-    dstdir = r'W:\_sorted'
+    print(fimg.abspath())
     
-    for f in fimg:
-        
-        if not os.path.lexists(f):
-            
-            continue 
-        _, name = os.path.split(f)
-        
-        
-        
-        match = pat.match(name)
-        
-        
-        print(name)
-        if match:
-            
-            dat, = match.groups()
-            
-            dpath = os.path.join(dstdir, dat[:-2])
-            
-            if not os.path.lexists(dpath):
-                
-                os.mkdir(dpath)
-                
-            if not os.path.lexists(os.path.join(dpath, name)):
-                
-                shutil.move(f, dpath)
+#    dstdir = r'W:\_sorted'
+#    
+#    for f in fimg:
+#        
+#        if not os.path.lexists(f):
+#            
+#            continue 
+#        _, name = os.path.split(f)
+#        
+#        
+#        
+#        match = pat.match(name)
+#        
+#        
+#        print(name)
+#        if match:
+#            
+#            dat, = match.groups()
+#            
+#            dpath = os.path.join(dstdir, dat[:-2])
+#            
+#            if not os.path.lexists(dpath):
+#                
+#                os.mkdir(dpath)
+#                
+#            if not os.path.lexists(os.path.join(dpath, name)):
+#                
+#                shutil.move(f, dpath)
 
         
     

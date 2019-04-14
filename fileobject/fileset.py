@@ -6,6 +6,27 @@ import fnmatch
 
 from datetime import date
 
+
+#%%---------------------------------------------------------------------------#
+def getpath(p):
+    
+    if hasattr(p, 'path'):
+        
+        return p.path
+    else:
+        return p
+#%%---------------------------------------------------------------------------#
+class FileStr(str):
+
+    #%%-----------------------------------------------------------------------#
+    def __new__(cls, s, path=None):
+        
+        obj = super().__new__(cls, s)
+        
+        obj.path = s if path is None else path
+        
+        return obj    
+    
 #%%---------------------------------------------------------------------------#
 class FileSet(set):
 
@@ -108,7 +129,7 @@ class FileSet(set):
     #%%-----------------------------------------------------------------------#
     def basename(self):
         
-        return FileSet(os.path.basename(p) for p in self)
+        return FileSet(FileStr(os.path.basename(p), getpath(p)) for p in self)
     
     #%%-----------------------------------------------------------------------#
     def commonpath(self):
@@ -209,12 +230,12 @@ class FileSet(set):
         
         if isinstance(start, str):
         
-            return FileSet(os.path.relpath(p, start) for p in self)
+            return FileSet(FileStr(os.path.relpath(p, start), getpath(p)) for p in self)
         else:
             
             s = slice(start, end)
             
-            return FileSet(os.sep.join(p.split(os.sep)[s]) for 
+            return FileSet(FileStr(os.sep.join(p.split(os.sep)[s]), getpath(p)) for 
                            p in self).remove('')
     #%%-----------------------------------------------------------------------#
     @classmethod
@@ -331,7 +352,11 @@ class FileSet(set):
                 fobj.writelines('\n'.join(sorted(self)))
             
         return self
-    
+
+    #%%-----------------------------------------------------------------------#  
+    def abspath(self):
+                
+        return FileSet(FileStr(getpath(p)) for p in self)
     #%%-----------------------------------------------------------------------#    
     def filter(self, *pattern, union=True): 
         
