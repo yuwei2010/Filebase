@@ -231,7 +231,7 @@ if __name__ == '__main__':
     
     import re
 
-    root = os.path.normpath(r"W:\_new_photos")
+    root = os.path.normpath(r"U:\_unsorted")
     
     print('Test path is "{}".'.format(os.path.abspath(root)))
     
@@ -245,11 +245,22 @@ if __name__ == '__main__':
     ffs = FileSet().load(os.path.join(root, '~contents.files.filebase'))
     dfs = FileSet().load(os.path.join(root, '~contents.dirs.filebase')) 
     
-
-    pat = re.compile(r'[A-Z]{3}_([0-9]{8})_\S+\.[A-Za-z4]{3}')
-    fimg = ffs['*'].basename().match(r'DSC[0-9]+.JPG')
     
-    print(fimg.abspath())
+    
+    print(ffs.count())
+    
+    path = os.path.join(r"U:\\", "Machine_Learning")
+    
+    if not os.path.lexists(path):
+        os.mkdir(path)
+#        
+    fs = ffs['*Deep Learning*'] 
+#    
+    fs.relpath2(root, 1).apply(shutil.move, path)
+#    pat = re.compile(r'[A-Z]{3}_([0-9]{8})_\S+\.[A-Za-z4]{3}')
+#    fimg = ffs['*'].basename().match(r'DSC[0-9]+.JPG')
+#    
+#    print(fimg.abspath())
     
 #    dstdir = r'W:\_sorted'
 #    
